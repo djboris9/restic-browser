@@ -116,19 +116,6 @@ jobs:
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $MACOS_CODE_CERT_PASS build.keychain
         /usr/bin/codesign --force -s $MACOS_CODE_CERT_TEAM_ID --deep --options=runtime "$MACOS_EXECUTABLE_PATH"
 
-    - name: Notarize (macOS)
-      env: 
-        MACOS_NOTARY_USER: ${{ secrets.MACOS_NOTARY_USER }}
-        MACOS_NOTARY_PASS: ${{ secrets.MACOS_NOTARY_PASS }}
-      if: ${{ matrix.config.name == 'macOS' && env.MACOS_NOTARY_USER != null && env.MACOS_NOTARY_USER != null }}
-      uses: devbotsxyz/xcode-notarize@v1
-      with:
-        appstore-connect-username: ${{ secrets.MACOS_NOTARY_USER }}
-        appstore-connect-password: ${{ secrets.MACOS_NOTARY_PASS }}
-        primary-bundle-id: com.wails.restic-browser
-        product-path: ./build/bin/${{ matrix.config.executable_name }}
-        verbose: false
-
     - name: Upload Artifact (Windows)
       if: ${{ matrix.config.name == 'Windows' }}
       uses: actions/upload-artifact@v3
